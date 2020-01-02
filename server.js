@@ -24,7 +24,13 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Connect to the MongoDB
-mongoose.connect("mongodb://localhost/news_scraper", { useNewUrlParser: true});
+mongoose.Promise = global.Promise;
+mongoose.connect(
+  process.env.MONGODB_URI || 
+  "mongodb://localhost/news_scraper", 
+  { useMongoClient: true }
+);
+
 
 // Handlebars
 var hbs = require(path.join(__dirname, 'helpers/handlebars.js'))(express_handlebars);
