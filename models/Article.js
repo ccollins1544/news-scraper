@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var ArticleSchema = new Schema({
   guid: {
     type: String,
-    required: false
+    required: true
   },
   title: {
     type: String,

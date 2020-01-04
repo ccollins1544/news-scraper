@@ -47,7 +47,8 @@ module.exports = function(app){
         // console.log(result);
         
         // Create a new Article using the `result` object built from scraping
-        db.Article.create(result)
+        // db.Article.create(result)
+        db.Article.updateOne({'guid': sid}, {$set: result}, {upsert: true})
           .then(function(dbArticle) {
             // View the added result in the console
             console.log(dbArticle);
