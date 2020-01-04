@@ -20,18 +20,32 @@ module.exports = function(app){
   // A GET route for scraping
   app.get("/scrape", function(req, res) {
     // First, we grab the body of the html with axios
-    axios.get("https://old.reddit.com/").then(function(response) {
+    // axios.get("https://old.reddit.com/").then(function(response) {
+    axios.get("https://www.ksl.com/news/utah").then(function(response) {
       // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(response.data);
 
       // Now, we grab every h2 within an article tag, and do the following:
-      $("p.title").each(function(i, element) {
+      // $("p.title").each(function(i, element) {
+      $(".queue_mn").children(".queue").each(function(i, element) {
         // Save an empty result object
         var result = {};
 
-        result.title = $(element).text();
-        result.link = $(element).children().attr("href");
+        var sid = $(element).data("sid");
+        result.guid = sid;
+        result.title = $(element).find(".headline a[data-sid='"+sid+"']").text();
+        result.link = "https://www.ksl.com";
+        result.link += $(element).find(".headline a[data-sid='"+sid+"']").attr("href");
+        
+        result.description = $(element).find(".headline").children().last().text();
+        result.pubdate = $(element).find(".headline .short").text().trim();
+        
+        var image_element = $("<div>");
+        image_element.append($(element).find(".image_box a[data-sid='"+sid+"']").children().last().html());
+        result.image = image_element.find("img").attr("src");
 
+        // console.log(result);
+        
         // Create a new Article using the `result` object built from scraping
         db.Article.create(result)
           .then(function(dbArticle) {
@@ -41,8 +55,9 @@ module.exports = function(app){
           .catch(function(err) {
             // If an error occurred, log it
             console.log(err);
-          });
-      });
+          }); 
+        
+      }); 
 
       // Send a message to the client
       res.send("Scrape Complete");

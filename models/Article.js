@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var ArticleSchema = new Schema({
+  guid: {
+    type: String,
+    required: false
+  },
   title: {
     type: String,
     required: true
@@ -9,6 +13,18 @@ var ArticleSchema = new Schema({
   link: {
     type: String,
     required: true 
+  },
+  description: {
+    type: String,
+    required: false
+  },
+  pubdate: {
+    type: String,
+    required: true
+  },
+  image: {
+    type: String,
+    required: false
   },
   note: {
     type: Schema.Types.ObjectId,
