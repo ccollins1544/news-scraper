@@ -20,18 +20,41 @@
 
 </head>
 
-<body>
+{{!--
+HEADER
+<i class="fas fa-table"></i>
+<i class="far fa-list-alt"></i>
+
+SAVED 
+<i class="fas fa-trash-alt"></i>
+<i class="fas fa-pencil-alt"></i>
+
+NEW
+<i class="fas fa-save"></i>
+
+<i class="far fa-newspaper"></i>x
+<i class="fas fa-search"></i>x
+<i class="fas fa-trash-alt"></i>x
+--}}
+
+<body class="page-template">
   <!-- Header -->
   <header id="main-header">
     <div class="container-fluid clearfix">
       <!-- Main Navbar -->
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="main-nav">
-        <div class="navbar-brand mb-0 h1">News Scraper</div>
+        <a class="navbar-brand mb-0 h1" href="/"><i class="far fa-newspaper"></i> News Scraper</a>
 
-        <div class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse show">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-              <a class="nav-link" href="#"><i class="fas fa-user" title="_"></i></a>
+              <a class="nav-link" href="/saved"><i class="fas fa-newspaper" title="Saved Articles"></i> Saved Articles <span class="badge badge-info">0</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="fas fa-search" title="Scrape Articles"></i> Scrape Articles</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="fas fa-trash-alt" title="Clear Articles"></i> Clear Articles</a>
             </li>
           </ul><!-- .navbar-nav -->
         </div><!-- .navbar-collapse -->
@@ -42,9 +65,16 @@
 
   <!-- Main Container -->
   <article class="content-wrapper container" id="main-container">
-    <section class="section-block jumbotron" id="main-section">
-      {{{body}}}
+
+    {{!-- 
+    <section class="section-block jumbotron" id="title-section">
+      <h1 class="text-center">
+        <i class="far fa-newspaper"></i><strong> {{page_title}}</strong>
+      </h1>
     </section>
+    --}}
+
+    {{{body}}}
   </article>
 
   <!-- Footer -->

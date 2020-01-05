@@ -59,5 +59,11 @@ function AlertMessage(message="", addThisClass="info", appendAfterElement){
 
 /* ===============[ 2. Document Ready ]==============*/ 
 $(function(){
+
+  function page_init() {
+
+  }
+
+  
   
 }); // END $(document).ready(function() { 

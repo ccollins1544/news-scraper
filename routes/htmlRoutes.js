@@ -21,8 +21,18 @@ module.exports = function(app){
 
     db.Article.find({}).then(function(dbArticles) {
       res.render("index", {
-        page_title: 'Home', 
-        msg: "Latest News",
+        page_title: "Latest News", 
+        articles: dbArticles
+      });
+    });
+  });
+
+  // Load saved page
+  app.get("/saved", function(req, res) {
+
+    db.Article.find({}).then(function(dbArticles) {
+      res.render("saved", {
+        page_title: "Saved Articles", 
         articles: dbArticles
       });
     });
