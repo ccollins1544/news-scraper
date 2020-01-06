@@ -19,17 +19,10 @@ const db = require(path.resolve(__dirname, "../models"));
 module.exports = function(app){
   // A GET route for scraping
   app.get("/scrape", function(req, res) {
-    // First, we grab the body of the html with axios
-    // axios.get("https://old.reddit.com/").then(function(response) {
 
     axios.get("https://www.ksl.com/news/utah").then(function(response) {
-      // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(response.data);
-
-      // Now, we grab every h2 within an article tag, and do the following:
-      // $("p.title").each(function(i, element) {
       $(".queue_mn").children(".queue").each(function(i, element) {
-        // Save an empty result object
         var result = {};
 
         var sid = $(element).data("sid");
@@ -45,15 +38,11 @@ module.exports = function(app){
         image_element.append($(element).find(".image_box a[data-sid='"+sid+"']").children().last().html());
         result.image = image_element.find("img").attr("src");
         
-        // Create a new Article using the `result` object built from scraping
-        // db.Article.create(result)
         db.Article.updateOne({'guid': sid}, {$set: result}, {upsert: true})
           .then(function(dbArticle) {
-            // View the added result in the console
             console.log(dbArticle);
           })
           .catch(function(err) {
-            // If an error occurred, log it
             console.log(err);
           }); 
       });
@@ -63,18 +52,13 @@ module.exports = function(app){
     res.send("Scrape Complete");
   });
 
-  // Route for grabbing a specific Article by id, populate it with it's note
   app.get("/articles/:id", function(req, res) {
-    // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
     db.Article.findOne({ _id: req.params.id })
-      // ..and populate all of the notes associated with it
       .populate("note")
       .then(function(dbArticle) {
-        // If we were able to successfully find an Article with the given id, send it back to the client
         res.json(dbArticle);
       })
       .catch(function(err) {
-        // If an error occurred, send it to the client
         res.json(err);
       });
   });
@@ -148,12 +132,9 @@ module.exports = function(app){
     let newNote = {};
     newNote = {...req.body, ...{ article: req.params.article_id }};
     newNote.article = req.params.article_id;
-    console.log("newNote", newNote);
-
-    // db.Note.updateOne({article: req.params.article_id}, {$set: newNote}, {upsert: true})
+    
     db.Note.create(newNote)
       .then(function(dbNote){
-        console.log("TEST", dbNote);
         return db.Article.findOneAndUpdate({ _id: req.params.article_id }, { $push: { note: dbNote._id } }, { new: true });
       })
       .then(function(dbNote) {

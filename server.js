@@ -2,13 +2,8 @@
  * @package news-scraper
  * @subpackage server
  * @author Christopher Collins
- * @version 1.0.0
+ * @version 2.0.0
  * @license none (public domain)
- * 
- * @todo 
- * -save.js
- * -comments.js
- * -css
 /* ===============[ Dependencies  ]========================*/
 const express = require("express");
 const mongoose = require("mongoose");

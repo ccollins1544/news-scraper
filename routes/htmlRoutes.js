@@ -23,8 +23,6 @@ module.exports = function(app){
       let saved_array = dbArticles.map( A => A.note.filter( N => N != null ).length !== 0 ? 1 : 0 );
       const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-      console.log("THIS MANY", dbArticles.length);
-
       res.render("index", {
         page_title: "Latest News", 
         articles: dbArticles,
@@ -39,8 +37,7 @@ module.exports = function(app){
 
     db.Article.find({ 'note' : { $exists: true, $ne: null } })
       .populate("note")
-      .then(function(dbArticles){
-        console.log("THIS MANY", dbArticles.length);        
+      .then(function(dbArticles){       
         const reducer = (accumulator, currentValue) => accumulator + currentValue;
         let saved_array = dbArticles.map( A => A.note.filter( N => N != null ).length !== 0 ? 1 : 0 );
 
@@ -55,36 +52,15 @@ module.exports = function(app){
         res.json(err);
       });
 
-    /*
-    db.Note.find({})
-    .populate("article")
-    .then(function(dbArticles){
-      let savedArticles = dbArticles.map(N => { N.article.note_id = N._id; return N.article; } );
-
-      res.render("saved", {
-        page_title: "Saved Articles", 
-        articles: savedArticles
-      });
-
-    })
-    .catch(function(err){
-      res.json(err);
-    });
-    */
-
   });
 
-  // Route for getting all Articles from the db
   app.get("/articles", function(req, res) {
-    // Grab every document in the Articles collection
     db.Article.find({})
       .populate("note")
       .then(function(dbArticle) {
-        // If we were able to successfully find Articles, send them back to the client
         res.json(dbArticle);
       })
       .catch(function(err) {
-        // If an error occurred, send it to the client
         res.json(err);
       });
   });

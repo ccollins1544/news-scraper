@@ -4,10 +4,7 @@
  *
  * ===============[ TABLE OF CONTENTS ]===============
  * 1. Functions
- *   1.1 AlertMessage() 
- * 
  * 2. Document Ready 
- *   2.1 
  * 
  *****************************************************/
 /* ===============[ 1. Functions ]===================*/
@@ -72,15 +69,11 @@ function addComment(event){
     var VALUE = "";
 
     for (var key in formArray[i]) {
-      // console.log(key+" => "+formArray[i][key]);
-
       if (key == "name") {
         KEY = formArray[i][key];
-
       } else if (key == "value") {
         VALUE = formArray[i][key];
       }
-
     }
     
     formData[KEY] = VALUE.trim();
@@ -89,7 +82,6 @@ function addComment(event){
     }
   }
 
-  console.log(formData);
   if(formData.hasOwnProperty('article_id') === false) return 
 
   let ajaxParams = {
@@ -99,7 +91,6 @@ function addComment(event){
   };
 
   $.ajax(ajaxParams).then(function(data){
-    console.log("post", data);
 
     let comment = $("<td>").attr("colspan",2);
     if(formData.hasOwnProperty('title')){
@@ -119,7 +110,6 @@ function addComment(event){
 
 function page_init(){
   $.get("/articles").then(function(data){
-    console.log("init", data);
     $("#news-articles > tbody").empty();
     if(data && data.length){
       renderArticles(data);
@@ -212,7 +202,6 @@ $(function(){
       if(data.ok){
         AlertMessage("Deleted " + data.deletedCount + " Articles", "success");
       }else{
-        console.log(data);
         AlertMessage("Failed to deleted articles. See console log for details", "danger");
       }
       page_init();
@@ -243,9 +232,6 @@ $(function(){
     let article_id = $(this).data("article_id");
     if(article_id === undefined ) return; 
 
-    // console.log("ARTICLE_ID",article_id);
-    // console.log("NOTE_ID",note_id);
-
     $("#all_comments_table > tbody").empty();
     $("#comment_article_id").val(article_id)
     $("#comment-section").slideDown();
@@ -256,7 +242,6 @@ $(function(){
     };
 
     $.ajax(ajaxParams).then(function(comments){
-      console.log("GET", comments);
 
       let article_title, article_description, article_image, article_pubdate;
       
@@ -300,6 +285,7 @@ $(function(){
   $("#news-articles, #all_comments_table").on('click', '.delete', function() {
     let note_id = $(this).data("note_id");
     let article_id;
+    let remove_row = "#" + note_id;
 
     let ajaxParams = {
       method: "DELETE",
@@ -310,30 +296,22 @@ $(function(){
       article_id = $(this).data("article_id");
       ajaxParams.url = "/notes/" + article_id;
       if(article_id === undefined) return;
+      remove_row = "#" + article_id;
       $("#comment-section").slideUp();
     }
 
-    console.log(ajaxParams);
-
     $.ajax(ajaxParams).then(function(data){
-      console.log("delete", data);
+      let table_id = "#" + $(this).closest('table').attr("id");
+      $(remove_row).remove();
+
+      if($(this).closest('tbody').children().length === 0 && note_id === undefined){
+        $(table_id).html("<tbody><tr><td><h6>No Articles Saved!</h6></td></tr></tbody>");
+        let saved_articles = $("#saved_articles").text();
+        saved_articles = parseInt(saved_articles);
+        saved_articles = saved_articles > 0 ? saved_articles - 1 : saved_articles;
+        $("#saved_articles").text(saved_articles);
+      }
     });
-
-    
-    let table_id = "#" + $(this).closest('table').attr("id");
-    $(this).closest('tr').remove();
-    console.log($(this).closest('tbody').children().length);
-
-    if($(this).closest('tbody').children().length === 0 && note_id === undefined){
-      console.log($(this).closest('tbody').children().length);
-      
-
-      $(table_id).html("<tbody><tr><td><h6>No Articles Saved!</h6></td></tr></tbody>");
-      let saved_articles = $("#saved_articles").text();
-      saved_articles = parseInt(saved_articles);
-      saved_articles = saved_articles > 0 ? saved_articles - 1 : saved_articles;
-      $("#saved_articles").text(saved_articles);
-    }
     
   });
   
