@@ -16,7 +16,7 @@
  * @param {string} message - Message to go in the alert box
  * @param {string} addThisClass - defaults to empty string. Can be info, danger, or success. 
  */
-function AlertMessage(message="", addThisClass="info", appendAfterElement){
+function AlertMessage(message="", addThisClass="info", prependAfterElement){
   $('#alert_message').remove();
 
   var alertElement = $("<div>").addClass("col-12 alert").attr("id","alert_message");
@@ -49,11 +49,15 @@ function AlertMessage(message="", addThisClass="info", appendAfterElement){
   // Display the alert message
   alertElement.html(message);
 
-  if(appendAfterElement === undefined){
-    appendAfterElement = $("#main-section");
+  if(prependAfterElement === undefined){
+    prependAfterElement = $("#main-section");
   }
 
-  appendAfterElement.append(alertElement);
+  prependAfterElement.prepend(alertElement);
+
+  setTimeout(() => $('#alert_message').fadeOut("slow", function(){ 
+    $(this).remove(); 
+  }), 2000);
   return;
 }
 
@@ -96,16 +100,122 @@ function addComment(event){
 
   $.ajax(ajaxParams).then(function(data){
     console.log("post", data);
-  });
 
+    let comment = $("<td>").attr("colspan",2);
+    if(formData.hasOwnProperty('title')){
+      comment.append("<h5>" + formData.title + "</h5>");
+    }
+
+    if(formData.hasOwnProperty('body')){
+      comment.append("<p>" + formData.body + "</p>");
+    }
+    
+    let comment_row = $("<tr>");
+    comment_row.append(comment);
+    $("#all_comments_table > tbody").append(comment_row);
+    $("#add-comment-form")[0].reset();
+  });
+}
+
+function page_init(){
+  $.get("/articles").then(function(data){
+    console.log("init", data);
+    $("#news-articles > tbody").empty();
+    if(data && data.length){
+      renderArticles(data);
+    }else{
+      var emptyRow = $(
+        [
+          "<tr>",
+          "<td colspan='2'><h6>Looks like we don't have any new articles loaded!</h6></td>",
+          "<td><button class='btn btn-dark scrape' ><i class='fas fa-search'></i> Scrape Now?</button></td>",   
+          "</tr>",
+        ].join("")
+      );
+      $("#news-articles > tbody").append(emptyRow);
+    }
+  });
+}
+
+function renderArticles(articles){
+  let articleRows = [];
+  for(let i=0; i<articles.length; i++ ){
+    articleRows.push(createRow(articles[i]));
+  }
+  $("#news-articles > tbody").append(articleRows);
+};
+
+function createRow(article){
+  var row = $("<tr>").attr("id",article._id);
+  var image = $("<td>").addClass("article_image").append(
+    $("<span>").addClass("image_wrap").append(
+      $("<a target='_blank'>")
+        .attr("href", article.link)
+        .attr("data-article_id", article._id)
+        .attr("data-guid", article.guid)
+        .append(
+          $("<img>").attr("src", article.image).attr("alt", article.title)
+        )
+    )
+  );
+  
+  var article_body = $("<td>").append(
+    $("<a target='_blank'>")
+      .attr("href", article.link)
+      .attr("data-article_id", article._id)
+      .attr("data-guid", article.guid)
+      .append(
+        $("<h6>").text(article.title)
+      ),
+    $("<small>").text("Posted " + article.pubdate),
+    $("<p>").text(article.description)
+  );
+
+  var action_buttons = $("<td>").append(
+    $("<i>").addClass("fas fa-save fa-2x save")
+      .attr("title", "Save Article")
+      .attr("data-article_id", article._id)
+      .attr("data-guid", article.guid)
+  )
+
+  row.append(image, article_body, action_buttons);
+  return row;
 }
 
 /* ===============[ 2. Document Ready ]==============*/ 
 $(function(){
 
-  function page_init() {
+  $("#scrape_articles").click(function(event){
+    event.preventDefault();
+    $.ajax({
+      method: "GET",
+      url: "/scrape"
+    }).then(function(data){
+      AlertMessage(data, "success");
+      setTimeout(page_init, 2000);
+    });
+  });
 
-  }
+  $("#news-articles").on('click', '.scrape', function() {
+    $("#scrape_articles").click();
+  });
+
+  $("#delete_articles").click(function(event){
+    event.preventDefault();
+    $.ajax({
+      method: "DELETE",
+      url: "/articles"
+    }).then(function(data){
+      $("#news-articles > tbody").empty();
+      if(data.ok){
+        AlertMessage("Deleted " + data.deletedCount + " Articles", "success");
+      }else{
+        console.log(data);
+        AlertMessage("Failed to deleted articles. See console log for details", "danger");
+      }
+      setTimeout(page_init, 2000);
+    });
+  });
 
   $("#add-comment-form").submit(addComment);
   
@@ -119,7 +229,10 @@ $(function(){
     };
 
     $.ajax(ajaxParams).then(function(data){
-      console.log("post", data);
+      let saved_articles = $("#saved_articles").text();
+      saved_articles = parseInt(saved_articles) + 1;
+      $("#saved_articles").text(saved_articles);
+      setTimeout(page_init, 2000);
     });
 
     $(this).closest('tr').remove();
@@ -205,7 +318,21 @@ $(function(){
       console.log("delete", data);
     });
 
+    
+    let table_id = "#" + $(this).closest('table').attr("id");
     $(this).closest('tr').remove();
+    console.log($(this).closest('tbody').children().length);
+
+    if($(this).closest('tbody').children().length === 0 && note_id === undefined){
+      console.log($(this).closest('tbody').children().length);
+      
+
+      $(table_id).html("<tbody><tr><td><h6>No Articles Saved!</h6></td></tr></tbody>");
+      let saved_articles = $("#saved_articles").text();
+      saved_articles = parseInt(saved_articles);
+      saved_articles = saved_articles > 0 ? saved_articles - 1 : saved_articles;
+      $("#saved_articles").text(saved_articles);
+    }
     
   });
   

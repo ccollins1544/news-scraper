@@ -48,13 +48,13 @@ NEW
         <div class="collapse navbar-collapse show">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item"> 
-              <a class="nav-link" href="/saved"><i class="fas fa-newspaper" title="Saved Articles"></i> Saved Articles <span class="badge badge-info">{{articles_saved}}</span></a>
+              <a class="nav-link" href="/saved"><i class="fas fa-newspaper" title="Saved Articles"></i> Saved Articles <span class="badge badge-info" id="saved_articles">{{articles_saved}}</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#"><i class="fas fa-search" title="Scrape Articles"></i> Scrape Articles</a>
+              <a class="nav-link" href="#" id="scrape_articles"><i class="fas fa-search" title="Scrape Articles"></i> Scrape Articles</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#"><i class="fas fa-trash-alt" title="Clear Articles"></i> Clear Articles</a>
+              <a class="nav-link" href="#" id="delete_articles"><i class="fas fa-trash-alt" title="Clear Articles"></i> Clear Articles</a>
             </li>
           </ul><!-- .navbar-nav -->
         </div><!-- .navbar-collapse -->

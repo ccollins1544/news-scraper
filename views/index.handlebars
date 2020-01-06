@@ -9,6 +9,13 @@
       <div class="card-body bg-light">
         <table class="table table-striped" id="news-articles">
           <tbody>
+            {{#isZero article_count}}
+              <tr>
+                <td colspan="2"><h6>Looks like we don't have any new articles loaded!</h6></td>
+                <td><button class='btn btn-dark scrape' ><i class='fas fa-search'></i> Scrape Now?</button></td>
+              </tr>
+            {{/isZero}}
+
             {{#each articles}}
             {{> all-articles}}
             {{/each}}

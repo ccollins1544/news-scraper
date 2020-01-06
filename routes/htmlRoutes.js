@@ -28,7 +28,8 @@ module.exports = function(app){
       res.render("index", {
         page_title: "Latest News", 
         articles: dbArticles,
-        articles_saved: saved_array.reduce(reducer)
+        article_count: dbArticles.length,
+        articles_saved: dbArticles.length === 0 ? 0 : saved_array.reduce(reducer)
       });
     });
   });
@@ -77,6 +78,7 @@ module.exports = function(app){
   app.get("/articles", function(req, res) {
     // Grab every document in the Articles collection
     db.Article.find({})
+      .populate("note")
       .then(function(dbArticle) {
         // If we were able to successfully find Articles, send them back to the client
         res.json(dbArticle);

@@ -21,6 +21,7 @@ module.exports = function(app){
   app.get("/scrape", function(req, res) {
     // First, we grab the body of the html with axios
     // axios.get("https://old.reddit.com/").then(function(response) {
+
     axios.get("https://www.ksl.com/news/utah").then(function(response) {
       // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(response.data);
@@ -55,12 +56,11 @@ module.exports = function(app){
             // If an error occurred, log it
             console.log(err);
           }); 
-        
-      }); 
+      });
+    }); 
 
-      // Send a message to the client
-      res.send("Scrape Complete");
-    });
+    // Send a message to the client
+    res.send("Scrape Complete");
   });
 
   // Route for grabbing a specific Article by id, populate it with it's note
@@ -75,6 +75,16 @@ module.exports = function(app){
       })
       .catch(function(err) {
         // If an error occurred, send it to the client
+        res.json(err);
+      });
+  });
+
+  app.delete("/articles/", function(req, res){
+    db.Article.deleteMany({})
+      .then(function(data){
+        res.json(data);
+      })
+      .catch(function(err){
         res.json(err);
       });
   });
