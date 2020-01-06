@@ -20,9 +20,15 @@ module.exports = function(app){
   app.get("/", function(req, res) {
 
     db.Article.find({}).then(function(dbArticles) {
+      let saved_array = dbArticles.map( A => A.note.filter( N => N != null ).length !== 0 ? 1 : 0 );
+      const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
+      console.log("THIS MANY", dbArticles.length);
+
       res.render("index", {
         page_title: "Latest News", 
-        articles: dbArticles
+        articles: dbArticles,
+        articles_saved: saved_array.reduce(reducer)
       });
     });
   });
@@ -30,6 +36,25 @@ module.exports = function(app){
   // Load saved page
   app.get("/saved", function(req, res) {
 
+    db.Article.find({ 'note' : { $exists: true, $ne: null } })
+      .populate("note")
+      .then(function(dbArticles){
+        console.log("THIS MANY", dbArticles.length);        
+        const reducer = (accumulator, currentValue) => accumulator + currentValue;
+        let saved_array = dbArticles.map( A => A.note.filter( N => N != null ).length !== 0 ? 1 : 0 );
+
+        res.render("saved", {
+          page_title: "Saved Articles", 
+          articles: dbArticles,
+          articles_saved: dbArticles.length === 0 ? 0 : saved_array.reduce(reducer)
+        });
+        
+      })
+      .catch(function(err){
+        res.json(err);
+      });
+
+    /*
     db.Note.find({})
     .populate("article")
     .then(function(dbArticles){
@@ -44,6 +69,7 @@ module.exports = function(app){
     .catch(function(err){
       res.json(err);
     });
+    */
 
   });
 

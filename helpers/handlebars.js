@@ -19,6 +19,18 @@ function hbsHelpers(hbs) {
         return options.fn(object[options.hash.key]);
       },
 
+      isZero: function(item, options){
+        try {
+          if(item){
+            return options.inverse(this);
+          }else{
+            return options.fn(this);  
+          }
+        }catch(e){
+          return options.inverse(item);
+        }
+      }
+
     },
     defaultLayout: "main"
   });

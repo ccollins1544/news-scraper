@@ -43,8 +43,6 @@ module.exports = function(app){
         var image_element = $("<div>");
         image_element.append($(element).find(".image_box a[data-sid='"+sid+"']").children().last().html());
         result.image = image_element.find("img").attr("src");
-
-        // console.log(result);
         
         // Create a new Article using the `result` object built from scraping
         // db.Article.create(result)
@@ -81,33 +79,73 @@ module.exports = function(app){
       });
   });
 
-  // Route for saving/updating an Article's associated Note
-  app.post("/articles/:id", function(req, res) {
-    // Create a new note and pass the req.body to the entry
-    db.Note.create(req.body)
+  app.get("/note/:id", function(req, res) {
+    db.Note.findOne({ _id: req.params.id })
+      .populate("article")
       .then(function(dbNote) {
-        // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
-        // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
-        // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-        return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
-      })
-      .then(function(dbArticle) {
-        // If we were able to successfully update an Article, send it back to the client
-        res.json(dbArticle);
+        res.json(dbNote);
       })
       .catch(function(err) {
-        // If an error occurred, send it to the client
         res.json(err);
       });
   });
 
-  app.put("/api/notes/:article_id", function(req, res ) {
+  app.delete("/note/:id", function(req, res) {
+    db.Note.deleteOne({ _id: req.params.id })
+      .then(function(data){
+        return db.Article.update(
+          { note: { $exists: true }},
+          { $pull: { note: req.params.id }},
+        );
+      })
+      .then(function(data){ 
+        res.json(data);
+       })
+      .catch(function(err){ 
+        res.json(err); 
+      });
+  });
+
+  app.delete("/notes/:article_id", function(req, res) {
+    db.Note.deleteMany({ article: req.params.article_id })
+      .then(function(data){
+        return db.Article.update(
+          { _id: req.params.article_id}, 
+          { $unset: { note: true }},
+          { multi: true, safe: true },
+        );
+      })
+      .then(function(data){ 
+        res.json(data);
+       })
+      .catch(function(err){ 
+        res.json(err); 
+      });
+  });
+
+  app.get("/notes/:article_id", function(req, res) {
+    db.Note.find({ article: req.params.article_id })
+      .populate("article")
+      .then(function(dbNote) {
+        res.json(dbNote);
+      })
+      .catch(function(err) {
+        res.json(err);
+      });
+  });
+
+  app.post("/note/:article_id", function(req, res ) {
     let newNote = {};
     newNote = {...req.body, ...{ article: req.params.article_id }};
     newNote.article = req.params.article_id;
     console.log("newNote", newNote);
 
-    db.Note.updateOne({article: req.params.article_id}, {$set: newNote}, {upsert: true})
+    // db.Note.updateOne({article: req.params.article_id}, {$set: newNote}, {upsert: true})
+    db.Note.create(newNote)
+      .then(function(dbNote){
+        console.log("TEST", dbNote);
+        return db.Article.findOneAndUpdate({ _id: req.params.article_id }, { $push: { note: dbNote._id } }, { new: true });
+      })
       .then(function(dbNote) {
         res.json(dbNote)
       })

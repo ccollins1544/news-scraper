@@ -3,19 +3,20 @@
     <i class="far fa-comments"></i><strong> Comments</strong>
   </h2>
   <div class="card bg-light">
-    <img src="https://img.ksl.com/slc/2768/276895/27689501.jpg?filter=ksl/responsive_lg" class="card-img-top" alt="...">
+    <img src="https://img.ksl.com/slc/2768/276895/27689501.jpg?filter=ksl/responsive_lg" class="card-img-top" id="comment_article_image" alt="...">
     <div class="card-body">
-      <h5 class="card-title">asdf</h5>
+      <h5 class="card-title" id="comment_article_title">asdf</h5>
       <p class="card-text">
-        <p>summary</p>
-        <table class="table table-striped">
+        <small id="comment_article_pubdate"></small>
+        <p id="comment_article_description">summary</p>
+        <table class="table table-striped" id="all_comments_table">
           <thead class="thead-dark">
             <tr>
               <th colspan="2"><i class="fas fa-comments"></i> All Comments</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
+            {{!-- <tr>
               <td>
                 <h5>comment title 1</h5>
                 <p>comment goes here</p>
@@ -28,7 +29,7 @@
                 <p>comment goes here</p>
               </td>
               <td class="action_icons"><button class="btn btn-light delete"><i class="fas fa-trash-alt fa-1x"></i></button></td>
-            </tr>
+            </tr> --}}
           </tbody>
           <tfoot>
             <tr>
@@ -42,12 +43,14 @@
                     <form rol="form" id="add-comment-form" data-action="add" data-key="0">
                       <div class="form-group">
                         <label for="comment_title">Title</label>
-                        <input type="text" class="form-control" id="comment_title" name="comment_title">
+                        <input type="text" class="form-control" id="comment_title" name="title">
                       </div>
                       <div class="form-group">
                         <label for="comment_body">Body</label>
-                        <textarea class="form-control" id="comment_body" name="comment_body"></textarea>
+                        <textarea class="form-control" id="comment_body" name="body"></textarea>
                       </div>
+                      
+                      <input type="hidden" id="comment_article_id" name="article_id">
                       <button type="submit" class="btn btn-primary float-sm-right save">Save <i class="fas fa-save fa-1x"></i></button>
                     </form>
                   </div><!-- .card-body -->
@@ -72,6 +75,12 @@
       <div class="card-body bg-light">
         <table class="table table-striped" id="news-articles">
           <tbody>
+            {{#isZero articles_saved}}
+              <tr>
+                <td><h6>No Articles Saved!</h6></td>
+              </tr>
+            {{/isZero}}
+            
             {{#each articles}}
             {{> saved-articles}}
             {{/each}}
