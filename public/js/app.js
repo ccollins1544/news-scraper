@@ -4,6 +4,12 @@
  *
  * ===============[ TABLE OF CONTENTS ]===============
  * 1. Functions
+ *   1.1 AlertMessage()
+ *   1.2 addComment()
+ *   1.3 page_init()
+ *   1.4 renderArticles(articles)
+ *   1.5 createRow(article)
+ * 
  * 2. Document Ready 
  * 
  *****************************************************/
@@ -58,6 +64,7 @@ function AlertMessage(message="", addThisClass="info", prependAfterElement){
   return;
 }
 
+// 1.2 addComment()
 function addComment(event){
   event.preventDefault();
 
@@ -108,6 +115,7 @@ function addComment(event){
   });
 }
 
+// 1.3 page_init()
 function page_init(){
   $.get("/articles").then(function(data){
     $("#news-articles > tbody").empty();
@@ -127,6 +135,7 @@ function page_init(){
   });
 }
 
+// 1.4 renderArticles(articles)
 function renderArticles(articles){
   let articleRows = [];
   for(let i=0; i<articles.length; i++ ){
@@ -135,6 +144,7 @@ function renderArticles(articles){
   $("#news-articles > tbody").append(articleRows);
 };
 
+// 1.5 createRow(article)
 function createRow(article){
   var row = $("<tr>").attr("id",article._id);
   var image = $("<td>").addClass("article_image").append(
