@@ -192,7 +192,7 @@ $(function(){
       url: "/scrape"
     }).then(function(data){
       AlertMessage(data, "success");
-      setTimeout(page_init, 2000);
+      // setTimeout(page_init, 2000);
     });
   });
 
