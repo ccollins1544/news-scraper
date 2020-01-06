@@ -192,11 +192,13 @@ $(function(){
       url: "/scrape"
     }).then(function(data){
       AlertMessage(data, "success");
-      // setTimeout(page_init, 2000);
+      setTimeout(() => window.location.reload(), 3000);
     });
   });
 
   $("#news-articles").on('click', '.scrape', function() {
+    $(this).removeClass('scrape').text("Reload Page?");
+    $(this).wrap("<a href='/'></a>");
     $("#scrape_articles").click();
   });
 
@@ -213,7 +215,7 @@ $(function(){
         console.log(data);
         AlertMessage("Failed to deleted articles. See console log for details", "danger");
       }
-      setTimeout(page_init, 2000);
+      page_init();
     });
   });
 
@@ -232,7 +234,6 @@ $(function(){
       let saved_articles = $("#saved_articles").text();
       saved_articles = parseInt(saved_articles) + 1;
       $("#saved_articles").text(saved_articles);
-      setTimeout(page_init, 2000);
     });
 
     $(this).closest('tr').remove();
