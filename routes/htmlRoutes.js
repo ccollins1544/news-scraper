@@ -30,14 +30,22 @@ module.exports = function(app){
   // Load saved page
   app.get("/saved", function(req, res) {
 
-    db.Article.find({}).then(function(dbArticles) {
+    db.Note.find({})
+    .populate("article")
+    .then(function(dbArticles){
+      let savedArticles = dbArticles.map(N => { N.article.note_id = N._id; return N.article; } );
+
       res.render("saved", {
         page_title: "Saved Articles", 
-        articles: dbArticles
+        articles: savedArticles
       });
-    });
-  });
 
+    })
+    .catch(function(err){
+      res.json(err);
+    });
+
+  });
 
   // Route for getting all Articles from the db
   app.get("/articles", function(req, res) {

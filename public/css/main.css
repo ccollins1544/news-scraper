@@ -21,8 +21,9 @@
 
 3.0 MAIN LAYOUT INFO
   3.1 AVATAR
-  3.2 Title Section
+  3.2 Comment Section
   3.3 All News Articles
+  3.4 Add Comment Form
 
 4.0 FOOTER
   4.1 Footer Links and Credits
@@ -199,8 +200,8 @@ select {
   font-size: 1.3em;
   margin-right: 10px;
   color: var(--body-text);
-  border-color: var(--button-text);
-  background-color: var(--button-text);
+  border-color: transparent;
+  background-color: transparent;
 }
 
 .btn-light:hover {
@@ -570,7 +571,7 @@ img {
   box-shadow: 0px 12px 18px -6px var(--primary-menu-background);
 }
 
-/* 3.2 Title Section (#title-section)
+/* 3.2 Comment Section (#comment-section)
 /*------------------------------------------------------*/
 section.section-block,
 article#main-container {
@@ -578,9 +579,13 @@ article#main-container {
   box-shadow: none;
 }
 
-section#title-section.jumbotron {
+section#comment-section.jumbotron {
+  display: none;
+  margin-top: 15px;
+  padding: 0.5rem 1rem 1rem 1rem;
   background-color: var(--body-text);
   border: solid 1px var(--primary-menu-background);
+  max-width: 75%;
 }
 
 /* 3.3 All News Articles (#main-section)
@@ -613,7 +618,8 @@ section#title-section.jumbotron {
   visibility: visible;
 }
 
-#news-articles tbody td.action_icons {
+td.action_icons {
+  text-align: right;
   vertical-align: middle;
 }
 
@@ -623,7 +629,7 @@ section#title-section.jumbotron {
   cursor: pointer;
 }
 
-.delete {
+i.delete {
   margin-top: 1.5rem;
 }
 
@@ -660,6 +666,22 @@ section#title-section.jumbotron {
 .card-header.text-white {
   color: var(--body-background) !important;
 }
+
+
+/* 3.4 Add Comment Form (#add-comment-form)
+/*------------------------------------------------------*/
+td.add-comment-form {
+  padding: 0px;
+}
+
+#add-comment-form label {
+  font-weight: bold;
+}
+
+#add-comment-form .form-control {
+  background-color: #fff;
+}
+
 
 /*------------------------------------------------------*/
 /*--------------[ 4.0 FOOTER ]--------------------------*/

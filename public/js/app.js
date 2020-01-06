@@ -63,7 +63,45 @@ $(function(){
   function page_init() {
 
   }
-
   
+  $("#news-articles").on('click', '.save', function() {
+    let article_id = $(this).data("article_id");
+    if(article_id === undefined) return; 
+    
+    let ajaxParams = {
+      method: "PUT",
+      url: "/api/notes/" + article_id
+    };
+
+    $.ajax(ajaxParams).then(function(data){
+      console.log("put", data);
+    });
+
+    $(this).closest('tr').remove();
+  });
+
+  $("#news-articles").on('click', '.edit', function() {
+    let article_id = $(this).data("article_id");
+    let note_id = $(this).data("note_id");
+    if(article_id === undefined || note_id === undefined ) return; 
+
+    console.log("ARTICLE_ID",article_id);
+    console.log("NOTE_ID",note_id);
+
+    $("#comment-section").slideDown();
+    
+    // $(this).closest('tr')
+    
+    // let ajaxParams = {
+    //   method: "PUT",
+    //   url: "/api/notes/" + article_id
+    // };
+
+    // $.ajax(ajaxParams).then(function(data){
+    //   console.log("put", data);
+    // });
+
+    // $(this).closest('tr').remove();
+  });
   
 }); // END $(document).ready(function() { 

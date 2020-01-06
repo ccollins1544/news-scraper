@@ -100,4 +100,19 @@ module.exports = function(app){
         res.json(err);
       });
   });
+
+  app.put("/api/notes/:article_id", function(req, res ) {
+    let newNote = {};
+    newNote = {...req.body, ...{ article: req.params.article_id }};
+    newNote.article = req.params.article_id;
+    console.log("newNote", newNote);
+
+    db.Note.updateOne({article: req.params.article_id}, {$set: newNote}, {upsert: true})
+      .then(function(dbNote) {
+        res.json(dbNote)
+      })
+      .catch(function(err) {
+        res.json(err);
+      }); 
+  });
 };

@@ -1,18 +1,18 @@
-<tr>
+<tr id="{{_id}}">
   <td class="article_image">
     <span class="image_wrap">
-      <a data-_id="{{_id}}" data-guid="{{guid}}" href="{{link}}" target="_blank">
+      <a data-article_id="{{_id}}" data-guid="{{guid}}" href="{{link}}" target="_blank">
         <img src="{{image}}" alt="title" />
       </a>
     </span>
   </td>
   <td>
-    <a data-_id="{{_id}}" data-guid="{{guid}}" href="{{link}}" target="_blank"><h6>{{title}}</h6></a>
+    <a data-article_id="{{_id}}" data-guid="{{guid}}" href="{{link}}" target="_blank"><h6>{{title}}</h6></a>
     <small>Posted {{pubdate}}</small>
     <p>{{description}}</p>
   </td>
   <td class="action_icons">
-    <i class="fas fa-pencil-alt fa-2x edit" title="Edit Article"></i>
-    <i class="fas fa-trash-alt fa-2x delete" title="Delete Article"></i>
+    <i class="fas fa-pencil-alt fa-2x edit" title="Edit Article" data-article_id="{{_id}}" data-guid="{{guid}}" data-note_id="{{note_id}}"></i>
+    <i class="fas fa-trash-alt fa-2x delete" title="Delete Article" data-article_id="{{_id}}" data-guid="{{guid}}" data-note_id="{{note_id}}"></i>
   </td>
 </tr>
